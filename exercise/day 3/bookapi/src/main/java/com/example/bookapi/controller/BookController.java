@@ -4,6 +4,7 @@ import com.example.bookapi.model.Book;
 import com.example.bookapi.service.BookService;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -26,6 +27,7 @@ public class BookController {
     return service.getBooks(page, size, title);
   }
 
+  @PreAuthorize("hasAuthority('ROLE_ADMIN')")
   @PostMapping
   public ResponseEntity<Book> createBook( @RequestBody Book book) {
     return ResponseEntity.ok(service.saveBook(book));
@@ -36,8 +38,10 @@ public class BookController {
     return ResponseEntity.ok(service.updateBook(id, book));
   }
 
+  @PreAuthorize("hasAuthority('ROLE_ADMIN')")
   @DeleteMapping("/{id}")
   public ResponseEntity<Void> deleteBook(@PathVariable Long id) {
+    System.out.println("🗑 Deleting book ID = " + id);
     service.deleteBook(id);
     return ResponseEntity.noContent().build();
   }
